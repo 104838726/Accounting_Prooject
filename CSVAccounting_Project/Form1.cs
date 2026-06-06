@@ -13,6 +13,9 @@ namespace CSVAccounting_Project
             //將enum型態轉換成combox可以讀取的型態
             cmbCategory.DataSource = Enum.GetValues(typeof(Category));
             dgvItems.DataSource = items;
+
+            //建立資料表
+            DbHelper.InitDb();
         }
 
 
@@ -38,6 +41,8 @@ namespace CSVAccounting_Project
             item.IsIncome = cbxIncome.Checked;
             item.CategoryType = (Category)cmbCategory.SelectedItem!;
 
+
+            DbHelper.InsertItem(item);
             items.Add(item);
             CalcTotal();
         }
@@ -150,41 +155,49 @@ namespace CSVAccounting_Project
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "CSV檔案|*.csv";
+            
+            items.Clear();
+            var items = DbHelper.GetAllItems();
 
-            if (dialog.ShowDialog() != DialogResult.OK) return;
+            foreach(var item in items)
             {
-                items.Clear();
-                try
-                {
-                    string[] lines = File.ReadAllLines(dialog.FileName, Encoding.UTF8);
-
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        string[] cols = lines[i].Split(",");
-                        if (cols.Length != 5) continue;
-
-                        Item item = new Item();
-
-                        item.Date = DateTime.Parse(cols[0]);
-                        item.Note = cols[1];
-                        item.Amount = decimal.Parse(cols[2]);
-                        item.CategoryType = (Category)Enum.Parse(typeof(Category), cols[3]);
-                        item.IsIncome = cols[4] == "是" ? true : false;
-
-
-                        items.Add(item);
-
-                    }
-                    CalcTotal();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"檔案格式不正確:{ex.ToString()}", "錯誤");
-                }
+                items.Add(item);
             }
+            //OpenFileDialog dialog = new OpenFileDialog();
+            //dialog.Filter = "CSV檔案|*.csv";
+
+            //if (dialog.ShowDialog() != DialogResult.OK) return;
+            //{
+            //    items.Clear();
+            //    try
+            //    {
+            //        string[] lines = File.ReadAllLines(dialog.FileName, Encoding.UTF8);
+
+            //        for (int i = 1; i < lines.Length; i++)
+            //        {
+            //            string[] cols = lines[i].Split(",");
+            //            if (cols.Length != 5) continue;
+
+            //            Item item = new Item();
+
+            //            item.Date = DateTime.Parse(cols[0]);
+            //            item.Note = cols[1];
+            //            item.Amount = decimal.Parse(cols[2]);
+            //            item.CategoryType = (Category)Enum.Parse(typeof(Category), cols[3]);
+            //            item.IsIncome = cols[4] == "是" ? true : false;
+
+
+            //            items.Add(item);
+
+            //        }
+            //        CalcTotal();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show($"檔案格式不正確:{ex.ToString()}", "錯誤");
+            //    }
         }
+        
         public void CalcTotal()
         {
             decimal incoming = 0, outgoing = 0;
