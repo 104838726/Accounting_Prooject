@@ -157,7 +157,7 @@ namespace CSVAccounting_Project
         {
             
             items.Clear();
-            var items = DbHelper.GetAllItems();
+            var itemLList = DbHelper.GetAllItems();
 
             foreach(var item in items)
             {
