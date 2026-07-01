@@ -83,10 +83,10 @@ namespace CSVAccounting_Project
                     cmd.ExecuteNonQuery();
                 }
 
-
-
             }
 
         }
-    }
+    }   //刪除
+
+        //修改
 }
