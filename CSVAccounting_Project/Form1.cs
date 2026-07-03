@@ -66,7 +66,10 @@ namespace CSVAccounting_Project
             if (MessageBox.Show("確定刪除?", "警告",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                items.RemoveAt(index);
+                Item item = items[index];
+                items.Remove(item);
+                DbHelper.DeleteItem(item);
+                CalcTotal() ;
             }
 
             Console.WriteLine(items[index]);
@@ -111,7 +114,7 @@ namespace CSVAccounting_Project
                 item.IsIncome = cbxIncome.Checked;
                 item.CategoryType = (Category)cmbCategory.SelectedItem!;
                 items[index] = item;
-
+                DbHelper.UpdateItem(item);
             }
             CalcTotal();
         }
